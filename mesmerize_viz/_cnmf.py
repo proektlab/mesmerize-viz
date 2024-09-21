@@ -228,6 +228,7 @@ class EvalController:
 
 class CNMFVizContainer:
     """Widget that contains the DataGrid, params text box fastplotlib GridPlot, etc"""
+    IMAGE_OPTIONS = IMAGE_OPTIONS
 
     @property
     def component_index(self) -> int:
@@ -338,10 +339,10 @@ class CNMFVizContainer:
             ]
 
         for option in image_data_options:
-            if option not in IMAGE_OPTIONS:
+            if option not in self.IMAGE_OPTIONS:
                 raise ValueError(
                     f"Invalid image option passed, valid image options are:\n"
-                    f"{IMAGE_OPTIONS}"
+                    f"{self.IMAGE_OPTIONS}"
                 )
 
         self._image_data_options = image_data_options
