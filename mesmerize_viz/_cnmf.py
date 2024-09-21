@@ -102,49 +102,6 @@ class ExtensionCallWrapper:
         return rval
 
 
-def get_cnmf_data_mapping(
-        series: pd.Series,
-        input_movie_kwargs: dict,
-        temporal_kwargs: dict,
-):
-    projections = {k: partial(series.caiman.get_projection, k) for k in PROJS}
-
-    rcm_rcb_projs = dict()
-    for proj in ["mean", "min", "max", "std"]:
-        rcm_rcb_projs[f"rcm-{proj}"] = ExtensionCallWrapper(
-            series.cnmf.get_rcm,
-            attr=f"{proj}_image"
-        )
-
-    zscore_func = TimeSeriesScalerMeanVariance().fit_transform
-    norm_func = TimeSeriesScalerMinMax().fit_transform
-
-    temporal_mappings = {
-        "temporal": ExtensionCallWrapper(series.cnmf.get_temporal, temporal_kwargs),
-        "zscore": ExtensionCallWrapper(series.cnmf.get_temporal, temporal_kwargs, post_process_func=zscore_func),
-        "norm": ExtensionCallWrapper(series.cnmf.get_temporal, temporal_kwargs, post_process_func=norm_func),
-        "dfof": partial(series.cnmf.get_detrend_dfof),
-        "dfof-zscore": ExtensionCallWrapper(series.cnmf.get_detrend_dfof, post_process_func=zscore_func),
-        "dfof-norm": ExtensionCallWrapper(series.cnmf.get_detrend_dfof, post_process_func=zscore_func)
-    }
-
-    mapping = {
-        "cnmf_obj": series.cnmf.get_output,
-        "input": ExtensionCallWrapper(series.caiman.get_input_movie, input_movie_kwargs),
-        "rcm": series.cnmf.get_rcm,
-        "rcb": series.cnmf.get_rcb,
-        "residuals": series.cnmf.get_residuals,
-        "corr": series.caiman.get_corr_image,
-        "pnr": series.caiman.get_pnr_image,
-        "contours": ExtensionCallWrapper(series.cnmf.get_contours, {"swap_dim": False}),
-        **projections,
-        **rcm_rcb_projs,
-        **temporal_mappings,
-    }
-
-    return mapping
-
-
 class EvalController:
     def __init__(self):
         self._float_metrics = [
@@ -602,8 +559,52 @@ class CNMFVizContainer:
 
         return index
 
+    @staticmethod
+    def get_cnmf_data_mapping(
+            series: pd.Series,
+            input_movie_kwargs: dict,
+            temporal_kwargs: dict,
+    ):
+        projections = {k: partial(series.caiman.get_projection, k) for k in PROJS}
+
+        rcm_rcb_projs = dict()
+        for proj in ["mean", "min", "max", "std"]:
+            rcm_rcb_projs[f"rcm-{proj}"] = ExtensionCallWrapper(
+                series.cnmf.get_rcm,
+                attr=f"{proj}_image"
+            )
+
+        zscore_func = TimeSeriesScalerMeanVariance().fit_transform
+        norm_func = TimeSeriesScalerMinMax().fit_transform
+
+        temporal_mappings = {
+            "temporal": ExtensionCallWrapper(series.cnmf.get_temporal, temporal_kwargs),
+            "zscore": ExtensionCallWrapper(series.cnmf.get_temporal, temporal_kwargs, post_process_func=zscore_func),
+            "norm": ExtensionCallWrapper(series.cnmf.get_temporal, temporal_kwargs, post_process_func=norm_func),
+            "dfof": partial(series.cnmf.get_detrend_dfof),
+            "dfof-zscore": ExtensionCallWrapper(series.cnmf.get_detrend_dfof, post_process_func=zscore_func),
+            "dfof-norm": ExtensionCallWrapper(series.cnmf.get_detrend_dfof, post_process_func=zscore_func)
+        }
+
+        mapping = {
+            "cnmf_obj": series.cnmf.get_output,
+            "input": ExtensionCallWrapper(series.caiman.get_input_movie, input_movie_kwargs),
+            "rcm": series.cnmf.get_rcm,
+            "rcb": series.cnmf.get_rcb,
+            "residuals": series.cnmf.get_residuals,
+            "corr": series.caiman.get_corr_image,
+            "pnr": series.caiman.get_pnr_image,
+            "contours": ExtensionCallWrapper(series.cnmf.get_contours, {"swap_dim": False}),
+            **projections,
+            **rcm_rcb_projs,
+            **temporal_mappings,
+        }
+
+        return mapping
+
+
     def _get_row_data(self, index: int) -> Dict[str, np.ndarray]:
-        data_mapping = get_cnmf_data_mapping(
+        data_mapping = self.get_cnmf_data_mapping(
             series=self._dataframe.iloc[index],
             input_movie_kwargs=self.input_movie_kwargs,
             temporal_kwargs=self.temporal_kwargs
