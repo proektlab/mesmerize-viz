@@ -885,7 +885,7 @@ class CNMFVizContainer:
     def set_component_colors(
             self,
             metric: Union[str, np.ndarray],
-            cmap: str = None,
+            cmap: Optional[str] = None,
     ):
         """
 
@@ -932,7 +932,14 @@ class CNMFVizContainer:
             if cmap is None:
                 cmap = "spring"
 
-            if metric == "snr_comps":
+            if isinstance(metric, np.ndarray):
+                if not metric.size == n_contours:
+                    raise ValueError(f"If using np.ndarray cor component_colors, the array size must be "
+                                     f"the same as n_contours: {n_contours}, your array size is: {metric.size}")
+
+                classifier = metric
+
+            elif metric == "snr_comps":
                 classifier = cnmf_obj.estimates.SNR_comp
 
             elif metric == "snr_comps_log":
@@ -943,13 +950,6 @@ class CNMFVizContainer:
 
             elif metric == "cnn_preds":
                 classifier = cnmf_obj.estimates.cnn_preds
-
-            elif isinstance(metric, np.ndarray):
-                if not metric.size == n_contours:
-                    raise ValueError(f"If using np.ndarray cor component_colors, the array size must be "
-                                     f"the same as n_contours: {n_contours}, your array size is: {metric.size}")
-
-                classifier = metric
 
             else:
                 raise ValueError("Invalid colors value")
