@@ -910,7 +910,7 @@ class CNMFVizContainer:
         n_contours = len(self._image_widget.gridplot[0, 0]["contours"])
 
         # use the random colors
-        if metric == "random":
+        if isinstance(metric, str) and metric == "random":
             for subplot in self._image_widget.gridplot:
                 for i, g in enumerate(subplot["contours"].graphics):
                     g.colors = self._random_colors[i]
@@ -919,7 +919,7 @@ class CNMFVizContainer:
                 self._set_component_visibility(subplot["contours"], cnmf_obj)
             return
 
-        if metric in ["accepted", "rejected"]:
+        if isinstance(metric, str) and metric in ["accepted", "rejected"]:
             if cmap is None:
                 cmap = "Set1"
 
