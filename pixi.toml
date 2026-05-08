@@ -1,4 +1,7 @@
 # Info for pixi-build
+[package]
+version = "0.1.0"  # see: https://github.com/prefix-dev/pixi/issues/2946
+
 [package.build.backend]
 name = "pixi-build-python"
 version = "0.4.*"
