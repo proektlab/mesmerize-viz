@@ -1,0 +1,10 @@
+# Info for pixi-build
+[package.build.backend]
+name = "pixi-build-backend"
+version = "0.4.*"
+
+[package.build.config]
+ignore-pypi-mapping = false
+
+[package.host-dependencies]
+uv = "*"

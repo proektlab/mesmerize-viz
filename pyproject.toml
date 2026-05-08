@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mesmerize-viz"
+authors = [
+    { name = "Kushal Kolar" },
+    { name = "Caitlin Lewis" }
+]
+description = "Mesmerize visualization package using fastplotlib"
+readme = { file = "README.md", content-type = "text/markdown" }
+license = "GPL-3.0-only"
+license-files = ["LICENSE"]
+urls = { Repository = "https://github.com/kushalkolar/mesmerize-viz" }
+dynamic = ["version"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows :: Windows 10",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Intended Audience :: Science/Research"
+]
+
+dependencies = [
+    "fastplotlib[notebook]~=0.1.0a16",
+    "pygfx==0.1.17",
+    "ipydatagrid",
+    "tslearn",
+]
+
+
+[tool.setuptools.packages.find]
+exclude = ["examples*"]
+
+[tool.setuptools.dynamic]
+version = { file = "mesmerize_viz/VERSION" }
