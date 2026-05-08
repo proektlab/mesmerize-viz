@@ -8,3 +8,7 @@ ignore-pypi-mapping = false
 
 [package.host-dependencies]
 uv = "*"
+
+[workspace]
+preview = ["pixi-build"]
+channels = ["conda-forge"]
