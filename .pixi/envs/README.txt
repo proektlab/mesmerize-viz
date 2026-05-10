@@ -1,0 +1,2 @@
+Environments are installed in a custom detached-environments directory: C:\Users\ethan\AppData\Local\rattler\cache\envs\mesmerize-viz-4257462890696184711\envs.
+Symlinks are not supported on this platform so environments will not be reachable from the default ('.pixi/envs') directory.
